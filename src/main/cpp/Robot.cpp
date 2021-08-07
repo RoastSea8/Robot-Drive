@@ -24,44 +24,17 @@ void Robot::RobotInit() {
   m_rightLeadMotor->SetInverted(false);
   m_rightFollowMotor->Follow(*m_rightLeadMotor, false);
 
+  m_robotDrive = new SFDrive(m_leftLeadMotor, m_rightLeadMotor);
+
   controller = new frc::XboxController{0}; // replace with USB port number on driver station
 }
 void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("left y: ", -(controller->GetY(left_analog)));
   frc::SmartDashboard::PutNumber("right x: ", controller->GetX(right_analog));
-  frc::SmartDashboard::PutNumber("left wheel distance: ", m_leftLeadMotor->GetEncoder().GetPosition() * kDriveRots2Feet);
-  frc::SmartDashboard::PutNumber("right wheel distance: ", m_rightLeadMotor->GetEncoder().GetPosition() * kDriveRots2Feet);
 }
 
-void Robot::AutonomousInit() {
-  kP = 0.0;
-  m_leftLeadMotor->GetEncoder().SetPosition(0);
-  m_rightLeadMotor->GetEncoder().SetPosition(0);
-  setpoint = lDistance = rDistance = lSpeed = rSpeed = lError = rError = 0.0;
-}
-void Robot::AutonomousPeriodic() {
-  if (controller->GetAButton()) {
-    kP = 0.1;                 // needs tuning
-    setpoint = 5.0;
-    wpi::outs() << "autonomous initiated" << "\n";
-  }
-  else if (controller->GetBButton()) {
-    kP = 0.0;
-    wpi::outs() << "autonomous disabled" << "\n";
-  }
-
-  lDistance = m_leftLeadMotor->GetEncoder().GetPosition() * kDriveRots2Feet;
-  rDistance = m_rightLeadMotor->GetEncoder().GetPosition() * kDriveRots2Feet;
-
-  lError = setpoint - lDistance;
-  rError = setpoint - rDistance;
-
-  lSpeed = kP * lError;
-  rSpeed = kP * rError;
-  
-  m_leftLeadMotor->Set(lSpeed);
-  m_rightLeadMotor->Set(rSpeed);
-}
+void Robot::AutonomousInit() {}
+void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
   m_leftLeadMotor->GetEncoder().SetPosition(0);
@@ -71,11 +44,7 @@ void Robot::TeleopPeriodic() {
   left_y = controller->GetY(left_analog);
   right_x = controller->GetX(right_analog);
 
-  if (abs(left_y) < 0.08) 
-    left_y = 0;
-
-  m_leftLeadMotor->Set(-left_y);
-  m_rightLeadMotor->Set(-left_y);
+  m_robotDrive->ArcadeDrive(-left_y, right_x);
 }
 
 void Robot::DisabledInit() {}
