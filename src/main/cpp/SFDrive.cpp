@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "SFDrive.h"
+#include <math.h>
 
 SFDrive::SFDrive(rev::CANSparkMax* lMotor, rev::CANSparkMax* rMotor) : lMotor{lMotor}, rMotor{rMotor} {};
 
@@ -38,6 +39,9 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation)
 
     leftMotorOutput = leftMotorOutput + excessHandler(rightMotorOutput);
     rightMotorOutput = rightMotorOutput + excessHandler(leftMotorOutput);
+
+    leftMotorOutput = std::copysign(pow(leftMotorOutput, 2), leftMotorOutput);
+    rightMotorOutput = std::copysign(pow(rightMotorOutput, 2), rightMotorOutput);
 
     lMotor->Set(leftMotorOutput);
     rMotor->Set(rightMotorOutput);
