@@ -5,7 +5,7 @@
 #include "SFDrive.h"
 #include <math.h>
 
-SFDrive::SFDrive(rev::CANSparkMax* lMotor, rev::CANSparkMax* rMotor) : lMotor{lMotor}, rMotor{rMotor} {};
+SFDrive::SFDrive(rev::CANSparkMax* lMotor, rev::CANSparkMax* rMotor) : lMotor{lMotor}, rMotor{rMotor} {}
 
 double excessHandler(double value)
 {
