@@ -37,6 +37,14 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation)
         rightMotorOutput = xSpeed + zRotation;
     }
 
+    /*
+    * Since the range of leftMotorOutput and rightMotorOutput is -2 ≤ x ≤ 2,
+    * the excess handler will always reduce this value to -1 ≤ x ≤ 1, 
+    * which is why I don't have to worry about the updated value of leftMotorOutput
+    * having an effect on the updated value of rightMotorOutput, after I modify each
+    * with excessHandler() below.
+    */
+
     leftMotorOutput = leftMotorOutput + excessHandler(rightMotorOutput);
     rightMotorOutput = rightMotorOutput + excessHandler(leftMotorOutput);
 
