@@ -6,6 +6,17 @@
 
 SFDrive::SFDrive(rev::CANSparkMax* lMotor, rev::CANSparkMax* rMotor) : lMotor{lMotor}, rMotor{rMotor} {};
 
+double excessHandler(double value)
+{
+    if (value > 1.0)
+        value = -(value - 1.0);
+    else if (value < -1.0)
+        value = -(value + 1.0);
+    else
+        value = 0.0;
+    return value;
+}
+
 void SFDrive::ArcadeDrive(double xSpeed, double zRotation) 
 {
     double leftMotorOutput, rightMotorOutput;
@@ -24,6 +35,9 @@ void SFDrive::ArcadeDrive(double xSpeed, double zRotation)
         leftMotorOutput = xSpeed - zRotation;
         rightMotorOutput = xSpeed + zRotation;
     }
+
+    leftMotorOutput = leftMotorOutput + excessHandler(rightMotorOutput);
+    rightMotorOutput = rightMotorOutput + excessHandler(leftMotorOutput);
 
     lMotor->Set(leftMotorOutput);
     rMotor->Set(rightMotorOutput);
